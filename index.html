@@ -472,10 +472,9 @@
             font-family: var(--mono);
             font-size: 12px;
             color: var(--text);
-            /* 臨床批號字串常包含多組且無空格，需強制斷行以免破壞版面 */
-            word-break: break-all; 
-            max-width: 180px; 
-            line-height: 1.4;
+            min-width: 160px; /* 強制保底寬度，防止被擠壓成一直線 */
+            overflow-wrap: anywhere; /* 允許長字串在邊界自然換行 */
+            line-height: 1.5;
         }
         
         /* ─── Scrollbar ─── */
@@ -625,9 +624,17 @@ let rows = '';
         });
         document.getElementById('tableBody').innerHTML = rows;
 
-        const dt = $('#recallTable').DataTable({
+    const dt = $('#recallTable').DataTable({
             order: [[0, 'desc']],
             pageLength: 10,
+            autoWidth: false, // 1. 關閉自動寬度計算
+            columnDefs: [     // 2. 明確指定各欄位寬度比例
+                { width: "90px", targets: 0 },   // 第0欄: 發文日期
+                { width: "60px", targets: 1 },   // 第1欄: 分級
+                { width: "25%", targets: 2 },    // 第2欄: 產品與許可證
+                { width: "25%", targets: 3 },    // 第3欄: 回收批號 (確保獲得1/4版面)
+                { width: "35%", targets: 4 }     // 第4欄: 回收原因
+            ],
             language: {
                 search: '搜尋：',
                 lengthMenu: '每頁 _MENU_ 筆',

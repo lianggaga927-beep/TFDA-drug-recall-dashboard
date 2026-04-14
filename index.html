@@ -6,7 +6,6 @@
     <title>西藥回收監測看板</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
     <style>
@@ -564,7 +563,6 @@
 </head>
 <body>
 
-<!-- ══ Top Nav ══ -->
 <nav class="top-nav">
     <div class="nav-inner">
 
@@ -578,16 +576,16 @@
 
         <div class="nav-sep"></div>
 
-        <div class="nav-pills">
-            <div class="kpi-pill all">
+        <div class="nav-pills nav-stats">
+            <div class="kpi-pill all stat-pill">
                 <span class="dot"></span>
                 <span id="pill-total">—</span> 總回收
             </div>
-            <div class="kpi-pill red">
+            <div class="kpi-pill red stat-pill">
                 <span class="dot"></span>
                 <span id="pill-class1">—</span> 第一級
             </div>
-            <div class="kpi-pill amber">
+            <div class="kpi-pill amber stat-pill">
                 <span class="dot"></span>
                 <span id="pill-class2">—</span> 第二級
             </div>
@@ -603,10 +601,8 @@
     </div>
 </nav>
 
-<!-- ══ Shell ══ -->
 <div class="shell">
 
-    <!-- Filter Bar -->
     <div class="filter-bar">
 
         <div class="filter-tabs">
@@ -623,244 +619,3 @@
             <button class="tab-btn" data-grade="2">
                 <span class="tab-dot"></span>
                 第二級回收
-                <span class="tab-count" id="cnt-2">—</span>
-            </button>
-        </div>
-
-        <div class="filter-right">
-            <span class="result-info" id="resultInfo"></span>
-            <div class="live-badge">
-                <span class="live-dot"></span>
-                LIVE
-            </div>
-        </div>
-
-    </div>
-
-    <!-- Table Card -->
-    <div class="table-card" id="tableCard" data-active="all">
-        <table id="recallTable" style="width:100%">
-            <thead>
-                <tr>
-                    <th>發文日期</th>
-                    <th>分級</th>
-                    <th>產品與許可證</th>
-                    <th>回收批號</th>
-                    <th>回收原因</th>
-                </tr>
-            </thead>
-            <tbody id="tableBody">
-                <!-- Skeleton -->
-                <tr>
-                    <td><div class="skel" style="width:72px"></div></td>
-                    <td><div class="skel" style="width:52px"></div></td>
-                    <td><div class="skel" style="width:150px"></div><div class="skel" style="width:100px;margin-top:5px;height:10px"></div></td>
-                    <td><div class="skel" style="width:90px"></div></td>
-                    <td><div class="skel"></div></td>
-                </tr>
-                <tr>
-                    <td><div class="skel" style="width:72px"></div></td>
-                    <td><div class="skel" style="width:52px"></div></td>
-                    <td><div class="skel" style="width:120px"></div><div class="skel" style="width:80px;margin-top:5px;height:10px"></div></td>
-                    <td><div class="skel" style="width:110px"></div></td>
-                    <td><div class="skel"></div></td>
-                </tr>
-                <tr>
-                    <td><div class="skel" style="width:72px"></div></td>
-                    <td><div class="skel" style="width:52px"></div></td>
-                    <td><div class="skel" style="width:160px"></div><div class="skel" style="width:90px;margin-top:5px;height:10px"></div></td>
-                    <td><div class="skel" style="width:75px"></div></td>
-                    <td><div class="skel"></div></td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-
-</div>
-
-<!-- ══ Scripts ══ -->
-<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
-    
-<script>
-let dtTable = null;
-let allData  = [];
-
-// ── Render rows ──────────────────────────────────────────
-function buildRows(data) {
-    if (!data.length) {
-        return `<tr><td colspan="5">
-            <div class="empty-state">
-                <div class="empty-icon">🔍</div>
-                <p>目前無符合條件的回收資料</p>
-            </div>
-        </td></tr>`;
-    }
-
-    return data.map(item => {
-        const grade   = item.回收分級 || '';
-        const isOne   = grade.includes('一');
-        const license = item.許可證字號  || '';
-        const holder  = item.許可證持有者 || '';
-        const batch   = item.批號        || '—';
-        const metaParts = [holder, license].filter(Boolean).join(' · ');
-
-        return `<tr>
-            <td class="date-cell">${item.日期 || ''}</td>
-            <td>
-                <span class="badge-grade ${isOne ? 'badge-danger' : 'badge-warning'}">
-                    <span class="badge-dot"></span>${grade}
-                </span>
-            </td>
-            <td>
-                <span class="product-name">${item.產品 || ''}</span>
-                ${metaParts ? `<span class="meta-text">${metaParts}</span>` : ''}
-            </td>
-            <td class="batch-cell">${batch}</td>
-            <td><span class="reason-text">${item.原因 || ''}</span></td>
-        </tr>`;
-    }).join('');
-}
-
-// ── Fetch & Init ─────────────────────────────────────────
-fetch('data/data.json')
-    .then(r => r.json())
-    .then(data => {
-        allData = data;
-
-        const class1 = data.filter(d => (d.回收分級 || '').includes('一')).length;
-        const class2 = data.length - class1;
-
-        // Nav KPIs
-        document.getElementById('pill-total').textContent  = data.length;
-        document.getElementById('pill-class1').textContent = class1;
-        document.getElementById('pill-class2').textContent = class2;
-
-        // Tab counts
-        document.getElementById('cnt-all').textContent = data.length;
-        document.getElementById('cnt-1').textContent   = class1;
-        document.getElementById('cnt-2').textContent   = class2;
-
-        document.getElementById('resultInfo').textContent = `共 ${data.length} 筆`;
-
-        // Build table
-        document.getElementById('tableBody').innerHTML = buildRows(data);
-
-        dtTable = $('#recallTable').DataTable({
-            order: [[0, 'desc']],
-            pageLength: 15,
-            autoWidth: false,
-            columnDefs: [
-                { width: '88px',  targets: 0 },
-                { width: '72px',  targets: 1 },
-                { width: '24%',   targets: 2 },
-                { width: '22%',   targets: 3 },
-                { width: '38%',   targets: 4 },
-            ],
-            language: {
-                search: '搜尋：',
-                lengthMenu: '每頁 _MENU_ 筆',
-                info: '第 _START_–_END_ 筆，共 _TOTAL_ 筆',
-                paginate: { previous: '←', next: '→' },
-                zeroRecords: '查無資料',
-                infoEmpty: '共 0 筆',
-                infoFiltered: '（共 _MAX_ 筆中篩選）'
-            },
-            drawCallback: function() {
-                const info = this.api().page.info();
-                document.getElementById('resultInfo').textContent =
-                    `顯示 ${info.recordsDisplay} 筆（共 ${info.recordsTotal} 筆）`;
-            }
-        });
-
-        // ── Global search ──
-        document.getElementById('globalSearch').addEventListener('input', function() {
-            dtTable.search(this.value).draw();
-        });
-
-        // ── Grade filter tabs ──
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const grade = this.dataset.grade;
-
-                // Toggle active state
-                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-
-                // Update card accent stripe
-                const card = document.getElementById('tableCard');
-                card.dataset.active = grade;
-
-                // Filter: rebuild rows and reinitialise DataTable
-                let filtered;
-                if (grade === 'all') {
-                    filtered = allData;
-                } else if (grade === '1') {
-                    filtered = allData.filter(d => (d.回收分級 || '').includes('一'));
-                } else {
-                    filtered = allData.filter(d => !(d.回收分級 || '').includes('一'));
-                }
-
-                // Destroy → refill → reinit
-                dtTable.destroy();
-                document.getElementById('tableBody').innerHTML = buildRows(filtered);
-
-                dtTable = $('#recallTable').DataTable({
-                    order: [[0, 'desc']],
-                    pageLength: 15,
-                    autoWidth: false,
-                    columnDefs: [
-                        { width: '88px',  targets: 0 },
-                        { width: '72px',  targets: 1 },
-                        { width: '24%',   targets: 2 },
-                        { width: '22%',   targets: 3 },
-                        { width: '38%',   targets: 4 },
-                    ],
-                    language: {
-                        search: '搜尋：',
-                        lengthMenu: '每頁 _MENU_ 筆',
-                        info: '第 _START_–_END_ 筆，共 _TOTAL_ 筆',
-                        paginate: { previous: '←', next: '→' },
-                        zeroRecords: '查無資料',
-                        infoEmpty: '共 0 筆',
-                        infoFiltered: '（共 _MAX_ 筆中篩選）'
-                    },
-                    drawCallback: function() {
-                        const info = this.api().page.info();
-                        document.getElementById('resultInfo').textContent =
-                            `顯示 ${info.recordsDisplay} 筆（共 ${info.recordsTotal} 筆）`;
-                    }
-                });
-            const dt = $('#recallTable').DataTable({
-            responsive: true, // 開啟手機端自動收折功能
-            order: [[0, 'desc']],
-            pageLength: 10,
-            // ... (保留原本的 language 設定) ...
-            columnDefs: [
-                { responsivePriority: 1, targets: 2 }, // 優先保留：產品名稱
-                { responsivePriority: 2, targets: 0 }, // 次要保留：發文日期
-                { responsivePriority: 3, targets: 1 }  // 次要保留：分級
-                // 其餘欄位 (批號、原因) 在螢幕空間不足時，將自動收折為按鈕 (+)
-            ]
-        });
-                // Re-hook search
-                const q = document.getElementById('globalSearch').value;
-                if (q) dtTable.search(q).draw();
-            });
-        });
-    })
-    .catch(err => {
-        console.error('資料載入失敗:', err);
-        document.getElementById('tableBody').innerHTML =
-            `<tr><td colspan="5">
-                <div class="empty-state">
-                    <div class="empty-icon">⚠️</div>
-                    <p>資料載入失敗，請確認 data/data.json 路徑正確</p>
-                </div>
-            </td></tr>`;
-    });
-</script>
-</body>
-</html>

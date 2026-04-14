@@ -17,27 +17,21 @@
             --surface2: #f4f6fa;
             --border: #e2e6ef;
             --border-light: #edf0f7;
-
             --text: #1a2035;
             --text-dim: #6b7a99;
             --text-muted: #b0bcd4;
-
             --blue: #3b82f6;
             --blue-soft: #eff6ff;
             --blue-border: #bfdbfe;
-
             --red: #ef4444;
             --red-soft: #fef2f2;
             --red-border: #fecaca;
-
             --amber: #d97706;
             --amber-soft: #fffbeb;
             --amber-border: #fde68a;
-
             --green: #16a34a;
             --green-soft: #f0fdf4;
             --green-border: #bbf7d0;
-
             --sans: 'Noto Sans TC', sans-serif;
             --mono: 'DM Mono', monospace;
             --radius: 12px;
@@ -72,323 +66,98 @@
             gap: 20px;
         }
 
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            flex-shrink: 0;
-        }
-
+        .brand { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
         .brand-icon {
-            width: 36px; height: 36px;
-            border-radius: 8px;
-            background: var(--blue-soft);
-            border: 1px solid var(--blue-border);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 16px;
+            width: 36px; height: 36px; border-radius: 8px; background: var(--blue-soft);
+            border: 1px solid var(--blue-border); display: flex; align-items: center; justify-content: center; font-size: 16px;
         }
+        .brand-text h1 { font-size: 16px; font-weight: 700; color: var(--text); letter-spacing: -0.01em; line-height: 1.2; }
+        .brand-text p { font-family: var(--mono); font-size: 10px; color: var(--text-muted); letter-spacing: 0.06em; text-transform: uppercase; margin-top: 1px; }
 
-        .brand-text h1 {
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--text);
-            letter-spacing: -0.01em;
-            line-height: 1.2;
-        }
+        .nav-divider { width: 1px; height: 28px; background: var(--border); flex-shrink: 0; }
 
-        .brand-text p {
-            font-family: var(--mono);
-            font-size: 10px;
-            color: var(--text-muted);
-            letter-spacing: 0.06em;
-            text-transform: uppercase;
-            margin-top: 1px;
-        }
-
-        .nav-divider {
-            width: 1px; height: 28px;
-            background: var(--border);
-            flex-shrink: 0;
-        }
-
-        .nav-stats {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex: 1;
-        }
-
+        .nav-stats { display: flex; align-items: center; gap: 8px; flex: 1; }
         .stat-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 7px;
-            padding: 6px 14px;
-            border-radius: 100px;
-            font-size: 13px;
-            font-weight: 500;
-            border: 1px solid;
-            cursor: default;
-            transition: transform 0.15s;
+            display: inline-flex; align-items: center; gap: 7px; padding: 6px 14px;
+            border-radius: 100px; font-size: 13px; font-weight: 500; border: 1px solid; cursor: default;
         }
-
-        .stat-pill:hover { transform: translateY(-1px); }
         .stat-pill .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
-
         .stat-pill.red   { background: var(--red-soft);   color: var(--red);   border-color: var(--red-border); }
         .stat-pill.amber { background: var(--amber-soft);  color: var(--amber); border-color: var(--amber-border); }
         .stat-pill.green { background: var(--green-soft);  color: var(--green); border-color: var(--green-border); }
-
         .stat-pill.red   .dot { background: var(--red); }
         .stat-pill.amber .dot { background: var(--amber); animation: pulse 2s infinite; }
         .stat-pill.green .dot { background: var(--green); }
 
-        @keyframes pulse {
-            0%, 100% { opacity:1; transform:scale(1); }
-            50%      { opacity:.5; transform:scale(.8); }
-        }
+        @keyframes pulse { 0%, 100% { opacity:1; transform:scale(1); } 50% { opacity:.5; transform:scale(.8); } }
 
-        .nav-search {
-            margin-left: auto;
-            position: relative;
-            flex-shrink: 0;
-        }
-
+        .nav-search { margin-left: auto; position: relative; flex-shrink: 0; }
         .nav-search input {
-            width: 280px;
-            padding: 8px 14px 8px 36px;
-            background: var(--surface2);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            font-family: var(--sans);
-            font-size: 13px;
-            color: var(--text);
-            outline: none;
-            transition: border-color 0.15s, box-shadow 0.15s;
+            width: 280px; padding: 8px 14px 8px 36px; background: var(--surface2); border: 1px solid var(--border);
+            border-radius: 8px; font-family: var(--sans); font-size: 13px; color: var(--text); outline: none;
         }
-
         .nav-search input::placeholder { color: var(--text-muted); }
+        .nav-search input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(59,130,246,0.12); background: var(--surface); }
+        .search-icon { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 13px; pointer-events: none; }
 
-        .nav-search input:focus {
-            border-color: var(--blue);
-            box-shadow: 0 0 0 3px rgba(59,130,246,0.12);
-            background: var(--surface);
-        }
-
-        .search-icon {
-            position: absolute; left: 11px; top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-muted);
-            font-size: 13px;
-            pointer-events: none;
-        }
-
-        /* ─── Shell ─── */
-        .shell {
-            max-width: 1280px;
-            margin: 0 auto;
-            padding: 28px 28px 72px;
-        }
-
-        .section-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 14px;
-        }
-
-        .section-title {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 15px;
-            font-weight: 600;
-            color: var(--text);
-        }
-
-        .section-dot {
-            width: 8px; height: 8px;
-            border-radius: 50%;
-            background: var(--blue);
-        }
-
-        .section-badge {
-            font-family: var(--mono);
-            font-size: 11px;
-            padding: 3px 10px;
-            border-radius: 100px;
-            background: var(--surface2);
-            border: 1px solid var(--border);
-            color: var(--text-dim);
-        }
-
+        /* ─── Shell & Layout ─── */
+        .shell { max-width: 1280px; margin: 0 auto; padding: 28px 28px 72px; }
+        
+        .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+        .section-title { display: flex; align-items: center; gap: 10px; font-size: 15px; font-weight: 600; color: var(--text); }
+        .section-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--blue); }
+        .section-badge { font-family: var(--mono); font-size: 11px; padding: 3px 10px; border-radius: 100px; background: var(--surface2); border: 1px solid var(--border); color: var(--text-dim); }
+        
         .live-tag {
-            font-family: var(--mono);
-            font-size: 10px;
-            font-weight: 500;
-            letter-spacing: 0.12em;
-            padding: 5px 12px;
-            border-radius: 6px;
-            background: var(--blue-soft);
-            color: var(--blue);
-            border: 1px solid var(--blue-border);
+            font-family: var(--mono); font-size: 10px; font-weight: 500; letter-spacing: 0.12em;
+            padding: 5px 12px; border-radius: 6px; background: var(--blue-soft); color: var(--blue); border: 1px solid var(--blue-border);
         }
 
-        /* ─── Main Grid ─── */
-        .main-grid {
-            display: grid;
-            grid-template-columns: 1fr 310px;
-            gap: 16px;
-            align-items: start;
-        }
-
-        /* ─── Card ─── */
-        .card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            overflow: hidden;
-        }
-
-        .card-header {
-            padding: 13px 18px;
-            border-bottom: 1px solid var(--border-light);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .card-title {
-            font-size: 11px;
-            font-weight: 600;
-            letter-spacing: 0.09em;
-            text-transform: uppercase;
-            color: var(--text-dim);
-        }
+        .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; width: 100%; }
 
         /* ─── DataTable Overrides ─── */
         #recallTable_wrapper { padding: 12px 16px 16px; }
-
-        #recallTable {
-            border-collapse: separate !important;
-            border-spacing: 0 !important;
-            width: 100% !important;
-        }
-
+        #recallTable { border-collapse: separate !important; border-spacing: 0 !important; width: 100% !important; }
+        
         #recallTable thead th {
-            background: var(--surface2);
-            color: var(--text-dim);
-            font-family: var(--mono);
-            font-size: 10px;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            padding: 10px 14px;
-            border: none !important;
-            border-bottom: 1px solid var(--border) !important;
-            white-space: nowrap;
+            background: var(--surface2); color: var(--text-dim); font-family: var(--mono); font-size: 10px;
+            letter-spacing: 0.1em; text-transform: uppercase; padding: 10px 14px; border: none !important; border-bottom: 1px solid var(--border) !important; white-space: nowrap;
         }
 
         #recallTable tbody tr { transition: background 0.1s; }
         #recallTable tbody tr:hover td { background: var(--blue-soft) !important; }
-
+        
         #recallTable tbody td {
-            border: none !important;
-            border-bottom: 1px solid var(--border-light) !important;
-            padding: 12px 14px;
-            font-size: 13.5px;
-            color: var(--text);
-            vertical-align: middle;
-            background: transparent;
+            border: none !important; border-bottom: 1px solid var(--border-light) !important; padding: 12px 14px;
+            font-size: 13.5px; color: var(--text); vertical-align: middle; background: transparent;
         }
 
-        /* 表格內文自訂樣式 */
-        .date-cell {
-            font-family: var(--mono);
-            font-size: 12px;
-            color: var(--text-dim);
-            white-space: nowrap;
-        }
-
-        .product-name {
-            font-weight: 600;
-            color: var(--text);
-            display: block;
-        }
-
-        .meta-text {
-            display: block;
-            font-family: var(--mono);
-            font-size: 11.5px;
-            color: var(--text-muted);
-            margin-top: 4px;
-        }
-
-        .batch-cell {
-            font-family: var(--mono);
-            font-size: 12px;
-            color: var(--text);
-            word-break: break-all; /* 強制批號斷行避免撐破版面 */
-            max-width: 180px; 
-            line-height: 1.4;
-        }
-
-        .reason-text {
-            font-size: 12.5px;
-            color: var(--text-dim);
-            line-height: 1.5;
-        }
+        .date-cell { font-family: var(--mono); font-size: 12px; color: var(--text-dim); white-space: nowrap; }
+        .product-name { font-weight: 600; color: var(--text); display: block; }
+        .meta-text { display: block; font-family: var(--mono); font-size: 11.5px; color: var(--text-muted); margin-top: 4px; }
+        .batch-cell { font-family: var(--mono); font-size: 12px; color: var(--text); word-break: break-all; max-width: 180px; line-height: 1.4; }
+        .reason-text { font-size: 12.5px; color: var(--text-dim); line-height: 1.5; }
 
         /* ─── Badges ─── */
         .badge-grade {
-            display: inline-flex;
-            align-items: center;
-            font-family: var(--mono);
-            font-size: 10px;
-            font-weight: 500;
-            letter-spacing: 0.05em;
-            padding: 3px 9px;
-            border-radius: 100px;
-            white-space: nowrap;
-            border: 1px solid;
+            display: inline-flex; align-items: center; font-family: var(--mono); font-size: 10px;
+            font-weight: 500; letter-spacing: 0.05em; padding: 3px 9px; border-radius: 100px; white-space: nowrap; border: 1px solid;
         }
-
         .badge-danger  { background: var(--red-soft);   color: var(--red);   border-color: var(--red-border); }
         .badge-warning { background: var(--amber-soft);  color: var(--amber); border-color: var(--amber-border); }
 
-        /* ─── Chart & Legend ─── */
-        .chart-wrap {
-            height: 230px; display: flex; align-items: center; justify-content: center; padding: 16px;
-        }
-
-        .legend-item {
-            display: flex; align-items: center; gap: 10px; padding: 9px 16px;
-            border-bottom: 1px solid var(--border-light); transition: background 0.1s; cursor: default;
-        }
-        .legend-item:last-child { border-bottom: none; }
-        .legend-item:hover { background: var(--surface2); }
-
-        .legend-dot { flex-shrink: 0; width: 9px; height: 9px; border-radius: 50%; }
-        .legend-label { flex: 1; font-size: 12px; color: var(--text-dim); line-height: 1.4; }
-        .legend-count {
-            font-family: var(--mono); font-size: 11px; font-weight: 500; color: var(--text);
-            background: var(--surface2); padding: 2px 8px; border-radius: 100px; border: 1px solid var(--border);
-        }
-
-        /* ─── 分頁按鈕樣式 (DataTables) ─── */
+        /* ─── 分頁按鈕樣式 ─── */
         .dataTables_paginate { margin-top: 15px; text-align: center; }
         .paginate_button {
-            color: var(--text-dim) !important; border: 1px solid var(--border) !important;
-            border-radius: 6px !important; padding: 4px 10px !important; margin: 0 2px !important;
-            font-size: 12.5px; background: var(--surface) !important; cursor: pointer;
+            color: var(--text-dim) !important; border: 1px solid var(--border) !important; border-radius: 6px !important;
+            padding: 4px 10px !important; margin: 0 2px !important; font-size: 12.5px; background: var(--surface) !important; cursor: pointer;
         }
         .paginate_button:hover { background: var(--blue-soft) !important; color: var(--blue) !important; border-color: var(--blue-border) !important; }
         .paginate_button.current { background: var(--blue) !important; color: #fff !important; border-color: var(--blue) !important; font-weight: 600; }
-        .paginate_button.disabled { opacity: 0.5; cursor: not-allowed; }
 
         /* ─── Skeleton ─── */
         .skel {
-            height: 13px; border-radius: 4px;
-            background: linear-gradient(90deg, var(--border) 25%, var(--border-light) 50%, var(--border) 75%);
+            height: 13px; border-radius: 4px; background: linear-gradient(90deg, var(--border) 25%, var(--border-light) 50%, var(--border) 75%);
             background-size: 200% 100%; animation: shimmer 1.4s infinite;
         }
         @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
@@ -396,23 +165,18 @@
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 
-        /* ─── 手機端視區與佈局嚴格控制 (Mobile Optimization) ─── */
+        /* ─── 手機端視區嚴格控制 ─── */
         @media (max-width: 768px) {
             html, body { overflow-x: hidden; width: 100vw; }
-            
             .nav-inner { flex-wrap: wrap; height: auto; padding: 12px 16px; gap: 12px; }
             .nav-divider { display: none; }
             .nav-stats { width: 100%; overflow-x: auto; padding-bottom: 4px; justify-content: flex-start; }
             .nav-search { width: 100%; }
             .nav-search input { width: 100%; }
-
             .shell { padding: 16px 12px 40px; width: 100%; box-sizing: border-box; }
-            .main-grid { grid-template-columns: 1fr; width: 100%; gap: 12px; }
-
             .card { width: 100%; max-width: 100vw; }
             #recallTable { width: 100% !important; }
             #recallTable th, #recallTable td { word-wrap: break-word; white-space: normal; }
-            
             #recallTable_paginate { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; margin-top: 16px; padding: 0 10px; }
         }
     </style>
@@ -428,24 +192,12 @@
                 <p>NHI Drug Recall Monitor</p>
             </div>
         </div>
-
         <div class="nav-divider"></div>
-
         <div class="nav-stats">
-            <div class="stat-pill red">
-                <span class="dot"></span>
-                <span id="pill-class1">—</span> 第一級
-            </div>
-            <div class="stat-pill amber">
-                <span class="dot"></span>
-                <span id="pill-class2">—</span> 第二級
-            </div>
-            <div class="stat-pill green">
-                <span class="dot"></span>
-                <span id="pill-total">—</span> 總回收數
-            </div>
+            <div class="stat-pill red"><span class="dot"></span><span id="pill-class1">—</span> 第一級</div>
+            <div class="stat-pill amber"><span class="dot"></span><span id="pill-class2">—</span> 第二級</div>
+            <div class="stat-pill green"><span class="dot"></span><span id="pill-total">—</span> 總回收數</div>
         </div>
-
         <div class="nav-search">
             <span class="search-icon">🔍</span>
             <input type="text" id="globalSearch" placeholder="搜尋藥品名稱、批號或字號…">
@@ -454,7 +206,6 @@
 </nav>
 
 <div class="shell">
-
     <div class="section-header">
         <div class="section-title">
             <span class="section-dot"></span>
@@ -464,68 +215,39 @@
         <div class="live-tag">LIVE</div>
     </div>
 
-    <div class="main-grid">
-
-        <div class="card">
-            <table id="recallTable" class="display responsive nowrap" style="width:100%">
-                <thead>
-                    <tr>
-                        <th>發文日期</th>
-                        <th>分級</th>
-                        <th>產品與許可證</th>
-                        <th>回收批號</th>
-                        <th>回收原因</th>
-                    </tr>
-                </thead>
-                <tbody id="tableBody">
-                    <tr><td><div class="skel" style="width:72px"></div></td><td><div class="skel" style="width:48px"></div></td><td><div class="skel" style="width:140px"></div><div class="skel" style="width:100px; margin-top:4px; height:10px;"></div></td><td><div class="skel" style="width:80px"></div></td><td><div class="skel"></div></td></tr>
-                    <tr><td><div class="skel" style="width:72px"></div></td><td><div class="skel" style="width:48px"></div></td><td><div class="skel" style="width:110px"></div><div class="skel" style="width:90px; margin-top:4px; height:10px;"></div></td><td><div class="skel" style="width:120px"></div></td><td><div class="skel"></div></td></tr>
-                </tbody>
-            </table>
-        </div>
-
-        <div style="display:flex;flex-direction:column;gap:14px;">
-            <div class="card">
-                <div class="card-header">
-                    <span class="card-title">回收原因分佈</span>
-                </div>
-                <div class="chart-wrap">
-                    <canvas id="reasonChart"></canvas>
-                </div>
-            </div>
-
-            <div class="card" id="legendPanel" style="display:none;">
-                <div class="card-header">
-                    <span class="card-title">主要原因</span>
-                </div>
-                <div id="legendBody"></div>
-            </div>
-        </div>
-
+    <div class="card">
+        <table id="recallTable" class="display responsive nowrap" style="width:100%">
+            <thead>
+                <tr>
+                    <th>發文日期</th>
+                    <th>分級</th>
+                    <th>產品與許可證</th>
+                    <th>回收批號</th>
+                    <th>回收原因</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <tr><td><div class="skel" style="width:72px"></div></td><td><div class="skel" style="width:48px"></div></td><td><div class="skel" style="width:140px"></div><div class="skel" style="width:100px; margin-top:4px; height:10px;"></div></td><td><div class="skel" style="width:80px"></div></td><td><div class="skel"></div></td></tr>
+                <tr><td><div class="skel" style="width:72px"></div></td><td><div class="skel" style="width:48px"></div></td><td><div class="skel" style="width:110px"></div><div class="skel" style="width:90px; margin-top:4px; height:10px;"></div></td><td><div class="skel" style="width:120px"></div></td><td><div class="skel"></div></td></tr>
+            </tbody>
+        </table>
     </div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-const PALETTE = ['#3b82f6','#f59e0b','#10b981','#ef4444','#8b5cf6','#06b6d4','#f97316','#ec4899'];
-
 fetch('data/data.json')
     .then(r => r.json())
     .then(data => {
         let class1 = 0, class2 = 0;
-        const reasonsCount = {};
 
-        // 統計運算
+        // 統計運算 (移除圓餅圖邏輯，大幅精簡)
         data.forEach(item => {
             const grade = item.回收分級 || '';
             if (grade.includes('一')) class1++; else class2++;
-            const raw = item.原因 || '未註明';
-            const key = raw.length > 20 ? raw.substring(0, 20) + '…' : raw;
-            reasonsCount[key] = (reasonsCount[key] || 0) + 1;
         });
 
         // 更新頂部標籤
@@ -534,12 +256,11 @@ fetch('data/data.json')
         document.getElementById('pill-class2').textContent = class2;
         document.getElementById('totalBadge').textContent = `共 ${data.length} 筆`;
 
-        // 構建表格 HTML (對應真實 API 欄位)
+        // 構建表格 HTML
         let rows = '';
         data.forEach(item => {
             const grade = item.回收分級 || '';
             const isOne = grade.includes('一');
-            
             const licenseNo = item.許可證字號 || '未註明字號';
             const holder = item.許可證持有者 || '未知藥廠';
             const batchNo = item.批號 || '未註明批號';
@@ -557,70 +278,28 @@ fetch('data/data.json')
         });
         document.getElementById('tableBody').innerHTML = rows;
 
-        // 初始化 DataTables (移除預設 Search/Length，啟用 Responsive)
+        // 初始化 DataTables
         const dt = $('#recallTable').DataTable({
             responsive: true,
             order: [[0, 'desc']],
             pageLength: 10,
-            dom: 'rtp', // 核心：僅保留 Table(t) 與 Pagination(p)
+            dom: 'rtp', // 僅保留 Table(t) 與 Pagination(p)
             language: {
                 paginate: { previous: '上一頁', next: '下一頁' },
                 zeroRecords: '查無資料'
             },
             columnDefs: [
-                // 行動端優先權與寬度分配
-                { responsivePriority: 1, targets: 2, width: '65%' }, // 產品名稱
-                { responsivePriority: 2, targets: 0, width: '25%' }, // 日期
+                { responsivePriority: 1, targets: 2, width: '40%' }, // 產品名稱
+                { responsivePriority: 2, targets: 0, width: '15%' }, // 日期
                 { responsivePriority: 3, targets: 1, width: '10%' }  // 分級
+                // 其餘配額由瀏覽器依據字串長度自動分配給批號與原因
             ]
         });
 
-        // 綁定頂部自定義搜尋框至 DataTables
+        // 綁定頂部自定義搜尋框
         document.getElementById('globalSearch').addEventListener('input', function() {
             dt.search(this.value).draw();
         });
-
-        // Chart.js 圓餅圖渲染
-        const labels = Object.keys(reasonsCount);
-        const values = Object.values(reasonsCount);
-
-        new Chart(document.getElementById('reasonChart'), {
-            type: 'doughnut',
-            data: {
-                labels,
-                datasets: [{
-                    data: values,
-                    backgroundColor: PALETTE.slice(0, labels.length),
-                    borderWidth: 2,
-                    borderColor: '#ffffff',
-                    hoverOffset: 6
-                }]
-            },
-            options: {
-                cutout: '65%',
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        backgroundColor: '#1a2035', borderColor: '#e2e6ef', borderWidth: 1,
-                        titleColor: '#93c5fd', bodyColor: '#f4f6fa', padding: 12,
-                        callbacks: { label: ctx => ` ${ctx.raw} 件  (${(ctx.raw/data.length*100).toFixed(1)}%)` }
-                    }
-                }
-            }
-        });
-
-        // 生成客製化圖例
-        const sorted = labels.map((l,i) => ({l, v: values[i], c: PALETTE[i % PALETTE.length]}))
-            .sort((a,b) => b.v - a.v).slice(0,7);
-
-        document.getElementById('legendBody').innerHTML = sorted.map(({l,v,c}) => `
-            <div class="legend-item">
-                <div class="legend-dot" style="background:${c}"></div>
-                <div class="legend-label">${l}</div>
-                <div class="legend-count">${v}</div>
-            </div>`).join('');
-
-        document.getElementById('legendPanel').style.display = 'block';
     })
     .catch(err => {
         console.error('資料載入失敗:', err);

@@ -5,25 +5,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>台灣藥品回收監測看板</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
 
     <style>
         :root {
-            --bg: #0d0f14;
-            --surface: #13161e;
-            --surface2: #1a1f2b;
-            --border: rgba(255,255,255,0.07);
-            --accent: #c8f542;
-            --accent2: #ff5c5c;
-            --accent3: #5ca8ff;
-            --text: #e8eaf0;
-            --text-dim: #6b7280;
-            --text-muted: #3a3f4d;
-            --danger: #ff4f4f;
-            --warning: #f6c23e;
-            --serif: 'Noto Serif TC', serif;
+            --bg: #eef1f6;
+            --surface: #ffffff;
+            --surface2: #f4f6fa;
+            --border: #e2e6ef;
+            --border-light: #edf0f7;
+
+            --text: #1a2035;
+            --text-dim: #6b7a99;
+            --text-muted: #b0bcd4;
+
+            --blue: #3b82f6;
+            --blue-soft: #eff6ff;
+            --blue-border: #bfdbfe;
+
+            --red: #ef4444;
+            --red-soft: #fef2f2;
+            --red-border: #fecaca;
+
+            --amber: #d97706;
+            --amber-soft: #fffbeb;
+            --amber-border: #fde68a;
+
+            --green: #16a34a;
+            --green-soft: #f0fdf4;
+            --green-border: #bbf7d0;
+
+            --sans: 'Noto Sans TC', sans-serif;
             --mono: 'DM Mono', monospace;
+            --radius: 12px;
+            --shadow: 0 1px 3px rgba(15,23,42,0.06), 0 1px 2px rgba(15,23,42,0.04);
         }
 
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -31,145 +47,200 @@
         body {
             background: var(--bg);
             color: var(--text);
-            font-family: var(--serif);
+            font-family: var(--sans);
             min-height: 100vh;
-            overflow-x: hidden;
+            font-size: 14px;
         }
 
-        /* ─── Noise overlay ─── */
-        body::before {
-            content: '';
-            position: fixed; inset: 0;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-            pointer-events: none; z-index: 0; opacity: 0.4;
+        /* ─── Top Nav ─── */
+        .top-nav {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            position: sticky; top: 0; z-index: 100;
+            box-shadow: var(--shadow);
         }
 
-        /* ─── Layout ─── */
-        .shell {
-            position: relative; z-index: 1;
-            max-width: 1200px;
+        .nav-inner {
+            max-width: 1280px;
             margin: 0 auto;
-            padding: 48px 24px 80px;
-        }
-
-        /* ─── Header ─── */
-        header {
+            padding: 0 28px;
+            height: 68px;
             display: flex;
-            align-items: flex-end;
-            justify-content: space-between;
-            margin-bottom: 52px;
-            gap: 16px;
+            align-items: center;
+            gap: 20px;
         }
 
-        .header-left {
+        .brand {
             display: flex;
-            flex-direction: column;
-            gap: 6px;
+            align-items: center;
+            gap: 12px;
+            flex-shrink: 0;
         }
 
-        .eyebrow {
-            font-family: var(--mono);
-            font-size: 11px;
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-            color: var(--accent);
-            opacity: 0.8;
+        .brand-icon {
+            width: 36px; height: 36px;
+            border-radius: 8px;
+            background: var(--blue-soft);
+            border: 1px solid var(--blue-border);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px;
         }
 
-        h1 {
-            font-size: clamp(24px, 4vw, 38px);
+        .brand-text h1 {
+            font-size: 16px;
             font-weight: 700;
-            line-height: 1.15;
-            letter-spacing: -0.02em;
+            color: var(--text);
+            letter-spacing: -0.01em;
+            line-height: 1.2;
         }
 
-        h1 span {
-            color: var(--accent);
+        .brand-text p {
+            font-family: var(--mono);
+            font-size: 10px;
+            color: var(--text-muted);
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            margin-top: 1px;
         }
 
-        .live-badge {
+        .nav-divider {
+            width: 1px; height: 28px;
+            background: var(--border);
+            flex-shrink: 0;
+        }
+
+        .nav-stats {
             display: flex;
             align-items: center;
             gap: 8px;
-            font-family: var(--mono);
-            font-size: 11px;
-            letter-spacing: 0.1em;
-            color: var(--text-dim);
-            border: 1px solid var(--border);
+            flex: 1;
+        }
+
+        .stat-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
             padding: 6px 14px;
             border-radius: 100px;
-            background: var(--surface);
+            font-size: 13px;
+            font-weight: 500;
+            border: 1px solid;
+            cursor: default;
+            transition: transform 0.15s;
         }
 
-        .live-dot {
+        .stat-pill:hover { transform: translateY(-1px); }
+
+        .stat-pill .dot {
             width: 7px; height: 7px;
             border-radius: 50%;
-            background: var(--accent);
-            animation: pulse 2s infinite;
+            flex-shrink: 0;
         }
+
+        .stat-pill.red   { background: var(--red-soft);   color: var(--red);   border-color: var(--red-border); }
+        .stat-pill.amber { background: var(--amber-soft);  color: var(--amber); border-color: var(--amber-border); }
+        .stat-pill.green { background: var(--green-soft);  color: var(--green); border-color: var(--green-border); }
+
+        .stat-pill.red   .dot { background: var(--red); }
+        .stat-pill.amber .dot { background: var(--amber); animation: pulse 2s infinite; }
+        .stat-pill.green .dot { background: var(--green); }
 
         @keyframes pulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.4; transform: scale(0.85); }
+            0%, 100% { opacity:1; transform:scale(1); }
+            50%       { opacity:.5; transform:scale(.8); }
         }
 
-        /* ─── KPI Strip ─── */
-        .kpi-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 12px;
-            margin-bottom: 36px;
-        }
-
-        .kpi {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 20px 22px;
+        .nav-search {
+            margin-left: auto;
             position: relative;
-            overflow: hidden;
-            transition: transform 0.2s, border-color 0.2s;
+            flex-shrink: 0;
         }
 
-        .kpi::after {
-            content: '';
-            position: absolute; top: 0; left: 0; right: 0; height: 2px;
-            background: var(--kpi-color, var(--accent));
+        .nav-search input {
+            width: 280px;
+            padding: 8px 14px 8px 36px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-family: var(--sans);
+            font-size: 13px;
+            color: var(--text);
+            outline: none;
+            transition: border-color 0.15s, box-shadow 0.15s;
         }
 
-        .kpi:hover {
-            transform: translateY(-2px);
-            border-color: rgba(255,255,255,0.13);
+        .nav-search input::placeholder { color: var(--text-muted); }
+
+        .nav-search input:focus {
+            border-color: var(--blue);
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.12);
+            background: var(--surface);
         }
 
-        .kpi-label {
-            font-family: var(--mono);
-            font-size: 10px;
-            letter-spacing: 0.14em;
-            text-transform: uppercase;
-            color: var(--text-dim);
-            margin-bottom: 10px;
+        .search-icon {
+            position: absolute; left: 11px; top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 13px;
+            pointer-events: none;
         }
 
-        .kpi-value {
-            font-size: 32px;
-            font-weight: 700;
-            line-height: 1;
+        /* ─── Shell ─── */
+        .shell {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 28px 28px 72px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 15px;
+            font-weight: 600;
             color: var(--text);
         }
 
-        .kpi-sub {
-            font-family: var(--mono);
-            font-size: 11px;
-            color: var(--text-dim);
-            margin-top: 6px;
+        .section-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: var(--blue);
         }
 
-        /* ─── Main grid ─── */
+        .section-badge {
+            font-family: var(--mono);
+            font-size: 11px;
+            padding: 3px 10px;
+            border-radius: 100px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+        }
+
+        .live-tag {
+            font-family: var(--mono);
+            font-size: 10px;
+            font-weight: 500;
+            letter-spacing: 0.12em;
+            padding: 5px 12px;
+            border-radius: 6px;
+            background: var(--blue-soft);
+            color: var(--blue);
+            border: 1px solid var(--blue-border);
+        }
+
+        /* ─── Main Grid ─── */
         .main-grid {
             display: grid;
-            grid-template-columns: 1fr 340px;
-            gap: 20px;
+            grid-template-columns: 1fr 310px;
+            gap: 16px;
             align-items: start;
         }
 
@@ -177,84 +248,59 @@
             .main-grid { grid-template-columns: 1fr; }
         }
 
-        /* ─── Panel ─── */
-        .panel {
+        /* ─── Card ─── */
+        .card {
             background: var(--surface);
             border: 1px solid var(--border);
-            border-radius: 16px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
             overflow: hidden;
         }
 
-        .panel-header {
-            padding: 20px 24px 16px;
-            border-bottom: 1px solid var(--border);
+        .card-header {
+            padding: 13px 18px;
+            border-bottom: 1px solid var(--border-light);
             display: flex;
             align-items: center;
             justify-content: space-between;
         }
 
-        .panel-title {
-            font-size: 13px;
+        .card-title {
+            font-size: 11px;
             font-weight: 600;
-            letter-spacing: 0.06em;
+            letter-spacing: 0.09em;
             text-transform: uppercase;
             color: var(--text-dim);
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
 
-        .panel-title::before {
-            content: '';
-            display: block;
-            width: 3px; height: 14px;
-            background: var(--accent);
-            border-radius: 2px;
-        }
-
-        .panel-body {
-            padding: 20px 24px;
-        }
-
-        /* ─── Chart panel ─── */
-        .chart-wrap {
-            position: relative;
-            height: 280px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* ─── Table overrides ─── */
-        .table-panel .panel-body { padding: 0; }
-
+        /* ─── DataTable Overrides ─── */
         #recallTable_wrapper {
-            padding: 16px 20px 20px;
+            padding: 12px 16px 16px;
         }
 
         #recallTable_wrapper .dataTables_filter input,
         #recallTable_wrapper .dataTables_length select {
             background: var(--surface2);
             border: 1px solid var(--border);
-            border-radius: 8px;
+            border-radius: 7px;
             color: var(--text);
-            padding: 6px 12px;
-            font-family: var(--serif);
-            font-size: 13px;
+            padding: 5px 10px;
+            font-family: var(--sans);
+            font-size: 12.5px;
             outline: none;
         }
 
         #recallTable_wrapper .dataTables_filter input:focus,
         #recallTable_wrapper .dataTables_length select:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 2px rgba(200,245,66,0.12);
+            border-color: var(--blue);
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
         }
 
         #recallTable_wrapper .dataTables_filter label,
         #recallTable_wrapper .dataTables_length label,
         #recallTable_wrapper .dataTables_info {
             color: var(--text-dim);
-            font-size: 13px;
+            font-size: 12.5px;
         }
 
         #recallTable_wrapper .dataTables_paginate .paginate_button {
@@ -263,21 +309,21 @@
             border-radius: 6px !important;
             padding: 4px 10px !important;
             margin: 0 2px !important;
-            font-size: 13px;
-            background: var(--surface2) !important;
+            font-size: 12.5px;
+            background: var(--surface) !important;
             transition: all 0.15s;
         }
 
         #recallTable_wrapper .dataTables_paginate .paginate_button:hover {
-            background: var(--surface2) !important;
-            color: var(--accent) !important;
-            border-color: var(--accent) !important;
+            background: var(--blue-soft) !important;
+            color: var(--blue) !important;
+            border-color: var(--blue-border) !important;
         }
 
         #recallTable_wrapper .dataTables_paginate .paginate_button.current {
-            background: var(--accent) !important;
-            color: #0d0f14 !important;
-            border-color: var(--accent) !important;
+            background: var(--blue) !important;
+            color: #fff !important;
+            border-color: var(--blue) !important;
             font-weight: 600;
         }
 
@@ -292,33 +338,26 @@
             color: var(--text-dim);
             font-family: var(--mono);
             font-size: 10px;
-            letter-spacing: 0.13em;
+            letter-spacing: 0.1em;
             text-transform: uppercase;
-            padding: 12px 14px;
+            padding: 10px 14px;
             border: none !important;
             border-bottom: 1px solid var(--border) !important;
             white-space: nowrap;
         }
 
-        #recallTable thead th.sorting::after,
-        #recallTable thead th.sorting_asc::after,
-        #recallTable thead th.sorting_desc::after {
-            color: var(--accent) !important;
-            opacity: 0.6;
-        }
-
         #recallTable tbody tr {
-            transition: background 0.15s;
+            transition: background 0.1s;
         }
 
         #recallTable tbody tr:hover td {
-            background: rgba(255,255,255,0.03) !important;
+            background: var(--blue-soft) !important;
         }
 
         #recallTable tbody td {
             border: none !important;
-            border-bottom: 1px solid var(--border) !important;
-            padding: 13px 14px;
+            border-bottom: 1px solid var(--border-light) !important;
+            padding: 12px 14px;
             font-size: 13.5px;
             color: var(--text);
             vertical-align: middle;
@@ -334,12 +373,12 @@
 
         .product-name {
             font-weight: 600;
-            font-size: 13.5px;
+            color: var(--text);
         }
 
         .reason-text {
             font-size: 12.5px;
-            color: rgba(232,234,240,0.7);
+            color: var(--text-dim);
             line-height: 1.5;
         }
 
@@ -347,99 +386,139 @@
         .badge-grade {
             display: inline-flex;
             align-items: center;
-            gap: 4px;
             font-family: var(--mono);
             font-size: 10px;
             font-weight: 500;
-            letter-spacing: 0.08em;
-            padding: 4px 10px;
+            letter-spacing: 0.05em;
+            padding: 3px 9px;
             border-radius: 100px;
             white-space: nowrap;
+            border: 1px solid;
         }
 
-        .badge-danger {
-            background: rgba(255,79,79,0.15);
-            color: #ff7979;
-            border: 1px solid rgba(255,79,79,0.3);
+        .badge-danger  { background: var(--red-soft);   color: var(--red);   border-color: var(--red-border); }
+        .badge-warning { background: var(--amber-soft);  color: var(--amber); border-color: var(--amber-border); }
+
+        /* ─── Chart ─── */
+        .chart-wrap {
+            height: 230px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
         }
 
-        .badge-warning {
-            background: rgba(246,194,62,0.12);
-            color: #f6c23e;
-            border: 1px solid rgba(246,194,62,0.25);
+        /* ─── Legend ─── */
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 16px;
+            border-bottom: 1px solid var(--border-light);
+            transition: background 0.1s;
+            cursor: default;
         }
 
-        /* ─── Skeleton loader ─── */
-        .skeleton-row td {
-            background: transparent !important;
+        .legend-item:last-child { border-bottom: none; }
+        .legend-item:hover { background: var(--surface2); }
+
+        .legend-dot {
+            flex-shrink: 0;
+            width: 9px; height: 9px;
+            border-radius: 50%;
         }
 
+        .legend-label {
+            flex: 1;
+            font-size: 12px;
+            color: var(--text-dim);
+            line-height: 1.4;
+        }
+
+        .legend-count {
+            font-family: var(--mono);
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text);
+            background: var(--surface2);
+            padding: 2px 8px;
+            border-radius: 100px;
+            border: 1px solid var(--border);
+        }
+
+        /* ─── Skeleton ─── */
         .skel {
-            height: 14px;
+            height: 13px;
             border-radius: 4px;
-            background: linear-gradient(90deg, var(--surface2) 25%, var(--surface) 50%, var(--surface2) 75%);
+            background: linear-gradient(90deg, var(--border) 25%, var(--border-light) 50%, var(--border) 75%);
             background-size: 200% 100%;
             animation: shimmer 1.4s infinite;
         }
 
         @keyframes shimmer {
-            0% { background-position: 200% 0; }
+            0%   { background-position: 200% 0; }
             100% { background-position: -200% 0; }
         }
 
         /* ─── Scrollbar ─── */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: var(--text-muted); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
     </style>
 </head>
 <body>
-<div class="shell">
 
-    <!-- Header -->
-    <header>
-        <div class="header-left">
-            <div class="eyebrow">TFDA · 藥品安全監測系統</div>
-            <h1>藥品回收<span>監測看板</span></h1>
+<!-- Top Nav -->
+<nav class="top-nav">
+    <div class="nav-inner">
+        <div class="brand">
+            <div class="brand-icon">💊</div>
+            <div class="brand-text">
+                <h1>西藥回收監測看板</h1>
+                <p>NHI Drug Recall Monitor</p>
+            </div>
         </div>
-        <div class="live-badge">
-            <span class="live-dot"></span>
-            <span>即時更新中</span>
-        </div>
-    </header>
 
-    <!-- KPI Strip -->
-    <div class="kpi-row" id="kpiRow">
-        <div class="kpi" style="--kpi-color: var(--accent2)">
-            <div class="kpi-label">本年度回收</div>
-            <div class="kpi-value" id="kpi-total">—</div>
-            <div class="kpi-sub">件藥品回收公告</div>
+        <div class="nav-divider"></div>
+
+        <div class="nav-stats">
+            <div class="stat-pill red">
+                <span class="dot"></span>
+                <span id="pill-class1">—</span> 第一級
+            </div>
+            <div class="stat-pill amber">
+                <span class="dot"></span>
+                <span id="pill-class2">—</span> 第二級
+            </div>
+            <div class="stat-pill green">
+                <span class="dot"></span>
+                <span id="pill-total">—</span> 本年度回收
+            </div>
         </div>
-        <div class="kpi" style="--kpi-color: var(--danger)">
-            <div class="kpi-label">第一級</div>
-            <div class="kpi-value" id="kpi-class1">—</div>
-            <div class="kpi-sub">最高警示等級</div>
-        </div>
-        <div class="kpi" style="--kpi-color: var(--warning)">
-            <div class="kpi-label">第二級</div>
-            <div class="kpi-value" id="kpi-class2">—</div>
-            <div class="kpi-sub">中度警示等級</div>
-        </div>
-        <div class="kpi" style="--kpi-color: var(--accent3)">
-            <div class="kpi-label">最近更新</div>
-            <div class="kpi-value" style="font-size:18px; margin-top: 4px;" id="kpi-latest">—</div>
-            <div class="kpi-sub">最新公告日期</div>
+
+        <div class="nav-search">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="globalSearch" placeholder="搜尋藥品名稱或許可證字號…">
         </div>
     </div>
+</nav>
 
-    <!-- Main Grid -->
+<!-- Shell -->
+<div class="shell">
+
+    <div class="section-header">
+        <div class="section-title">
+            <span class="section-dot"></span>
+            最新回收公告
+            <span class="section-badge" id="totalBadge">載入中…</span>
+        </div>
+        <div class="live-tag">LIVE</div>
+    </div>
+
     <div class="main-grid">
 
-        <!-- Table Panel -->
-        <div class="panel table-panel">
-            <div class="panel-header">
-                <div class="panel-title">回收事件明細</div>
-            </div>
+        <!-- Table -->
+        <div class="card">
             <table id="recallTable" style="width:100%">
                 <thead>
                     <tr>
@@ -450,96 +529,81 @@
                     </tr>
                 </thead>
                 <tbody id="tableBody">
-                    <!-- skeleton rows -->
-                    <tr class="skeleton-row"><td><div class="skel" style="width:70px"></div></td><td><div class="skel" style="width:50px"></div></td><td><div class="skel" style="width:140px"></div></td><td><div class="skel"></div></td></tr>
-                    <tr class="skeleton-row"><td><div class="skel" style="width:70px"></div></td><td><div class="skel" style="width:50px"></div></td><td><div class="skel" style="width:120px"></div></td><td><div class="skel"></div></td></tr>
-                    <tr class="skeleton-row"><td><div class="skel" style="width:70px"></div></td><td><div class="skel" style="width:50px"></div></td><td><div class="skel" style="width:160px"></div></td><td><div class="skel"></div></td></tr>
+                    <tr><td><div class="skel" style="width:72px"></div></td><td><div class="skel" style="width:48px"></div></td><td><div class="skel" style="width:140px"></div></td><td><div class="skel"></div></td></tr>
+                    <tr><td><div class="skel" style="width:72px"></div></td><td><div class="skel" style="width:48px"></div></td><td><div class="skel" style="width:110px"></div></td><td><div class="skel"></div></td></tr>
+                    <tr><td><div class="skel" style="width:72px"></div></td><td><div class="skel" style="width:48px"></div></td><td><div class="skel" style="width:160px"></div></td><td><div class="skel"></div></td></tr>
                 </tbody>
             </table>
         </div>
 
-        <!-- Side Panel: Chart -->
-        <div style="display:flex; flex-direction:column; gap:20px;">
-            <div class="panel">
-                <div class="panel-header">
-                    <div class="panel-title">原因分佈</div>
+        <!-- Sidebar -->
+        <div style="display:flex;flex-direction:column;gap:14px;">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">回收原因分佈</span>
                 </div>
-                <div class="panel-body">
-                    <div class="chart-wrap">
-                        <canvas id="reasonChart"></canvas>
-                    </div>
+                <div class="chart-wrap">
+                    <canvas id="reasonChart"></canvas>
                 </div>
             </div>
 
-            <!-- Legend / Top Reasons -->
-            <div class="panel" id="legendPanel" style="display:none;">
-                <div class="panel-header">
-                    <div class="panel-title">主要原因</div>
+            <div class="card" id="legendPanel" style="display:none;">
+                <div class="card-header">
+                    <span class="card-title">主要原因</span>
                 </div>
-                <div class="panel-body" id="legendBody" style="padding:12px 20px;"></div>
+                <div id="legendBody"></div>
             </div>
         </div>
 
     </div>
 </div>
 
-<!-- Scripts -->
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-const PALETTE = ['#c8f542','#5ca8ff','#ff7f50','#a78bfa','#34d399','#fb923c','#f472b6','#60a5fa'];
+const PALETTE = ['#3b82f6','#f59e0b','#10b981','#ef4444','#8b5cf6','#06b6d4','#f97316','#ec4899'];
 
 fetch('data/data.json')
     .then(r => r.json())
     .then(data => {
-        // ── KPI Calculation ──
-        let class1 = 0, class2 = 0, latest = '';
+        let class1 = 0, class2 = 0;
         const reasonsCount = {};
 
         data.forEach(item => {
             const grade = item.回收分級 || '';
-            if (grade.includes('一')) class1++;
-            else class2++;
-
-            const d = item.日期 || '';
-            if (d > latest) latest = d;
-
+            if (grade.includes('一')) class1++; else class2++;
             const raw = item.原因 || '未註明';
-            const key = raw.length > 18 ? raw.substring(0, 18) + '…' : raw;
+            const key = raw.length > 20 ? raw.substring(0, 20) + '…' : raw;
             reasonsCount[key] = (reasonsCount[key] || 0) + 1;
         });
 
-        document.getElementById('kpi-total').textContent = data.length;
-        document.getElementById('kpi-class1').textContent = class1;
-        document.getElementById('kpi-class2').textContent = class2;
-        document.getElementById('kpi-latest').textContent = latest.substring(0, 10);
+        document.getElementById('pill-total').textContent = data.length;
+        document.getElementById('pill-class1').textContent = class1;
+        document.getElementById('pill-class2').textContent = class2;
+        document.getElementById('totalBadge').textContent = `共 ${data.length} 筆`;
 
-        // ── Table rows ──
         let rows = '';
         data.forEach(item => {
             const grade = item.回收分級 || '';
             const isOne = grade.includes('一');
-            const badgeClass = isOne ? 'badge-danger' : 'badge-warning';
-            rows += `
-                <tr>
-                    <td class="date-cell">${item.日期 || ''}</td>
-                    <td><span class="badge-grade ${badgeClass}">${grade}</span></td>
-                    <td><span class="product-name">${item.產品 || ''}</span></td>
-                    <td><span class="reason-text">${item.原因 || ''}</span></td>
-                </tr>`;
+            rows += `<tr>
+                <td class="date-cell">${item.日期 || ''}</td>
+                <td><span class="badge-grade ${isOne ? 'badge-danger' : 'badge-warning'}">${grade}</span></td>
+                <td><span class="product-name">${item.產品 || ''}</span></td>
+                <td><span class="reason-text">${item.原因 || ''}</span></td>
+            </tr>`;
         });
         document.getElementById('tableBody').innerHTML = rows;
 
-        // ── DataTable ──
-        $('#recallTable').DataTable({
+        const dt = $('#recallTable').DataTable({
             order: [[0, 'desc']],
             pageLength: 10,
             language: {
                 search: '搜尋：',
-                lengthMenu: '每頁顯示 _MENU_ 筆',
-                info: '第 _START_ – _END_ 筆，共 _TOTAL_ 筆',
+                lengthMenu: '每頁 _MENU_ 筆',
+                info: '第 _START_–_END_ 筆，共 _TOTAL_ 筆',
                 paginate: { previous: '←', next: '→' },
                 zeroRecords: '查無資料',
                 infoEmpty: '共 0 筆',
@@ -547,7 +611,10 @@ fetch('data/data.json')
             }
         });
 
-        // ── Chart ──
+        document.getElementById('globalSearch').addEventListener('input', function() {
+            dt.search(this.value).draw();
+        });
+
         const labels = Object.keys(reasonsCount);
         const values = Object.values(reasonsCount);
 
@@ -558,20 +625,21 @@ fetch('data/data.json')
                 datasets: [{
                     data: values,
                     backgroundColor: PALETTE.slice(0, labels.length),
-                    borderWidth: 0,
-                    hoverOffset: 8
+                    borderWidth: 2,
+                    borderColor: '#ffffff',
+                    hoverOffset: 6
                 }]
             },
             options: {
-                cutout: '68%',
+                cutout: '65%',
                 plugins: {
                     legend: { display: false },
                     tooltip: {
-                        backgroundColor: '#1a1f2b',
-                        borderColor: 'rgba(255,255,255,0.08)',
+                        backgroundColor: '#1a2035',
+                        borderColor: '#e2e6ef',
                         borderWidth: 1,
-                        titleColor: '#c8f542',
-                        bodyColor: '#e8eaf0',
+                        titleColor: '#93c5fd',
+                        bodyColor: '#f4f6fa',
                         padding: 12,
                         callbacks: {
                             label: ctx => ` ${ctx.raw} 件  (${(ctx.raw/data.length*100).toFixed(1)}%)`
@@ -581,16 +649,14 @@ fetch('data/data.json')
             }
         });
 
-        // ── Custom legend ──
-        const sorted = labels.map((l,i) => ({l, v: values[i], c: PALETTE[i]})
-        ).sort((a,b) => b.v - a.v).slice(0,6);
+        const sorted = labels.map((l,i) => ({l, v: values[i], c: PALETTE[i % PALETTE.length]}))
+            .sort((a,b) => b.v - a.v).slice(0,7);
 
-        const legendBody = document.getElementById('legendBody');
-        legendBody.innerHTML = sorted.map(({l,v,c}) => `
-            <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
-                <div style="flex-shrink:0;width:10px;height:10px;border-radius:50%;background:${c}"></div>
-                <div style="flex:1;font-size:12px;color:rgba(232,234,240,0.75);line-height:1.4;">${l}</div>
-                <div style="font-family:var(--mono);font-size:12px;color:var(--text);font-weight:500;">${v}</div>
+        document.getElementById('legendBody').innerHTML = sorted.map(({l,v,c}) => `
+            <div class="legend-item">
+                <div class="legend-dot" style="background:${c}"></div>
+                <div class="legend-label">${l}</div>
+                <div class="legend-count">${v}</div>
             </div>`).join('');
 
         document.getElementById('legendPanel').style.display = 'block';
@@ -598,7 +664,7 @@ fetch('data/data.json')
     .catch(err => {
         console.error('資料載入失敗:', err);
         document.getElementById('tableBody').innerHTML =
-            `<tr><td colspan="4" style="text-align:center;padding:40px;color:var(--text-dim);font-family:var(--mono);font-size:13px;">
+            `<tr><td colspan="4" style="text-align:center;padding:48px;color:var(--text-dim);font-size:13px;">
                 ⚠ 資料載入失敗，請確認 data/data.json 路徑正確</td></tr>`;
     });
 </script>

@@ -4,102 +4,603 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>台灣藥品回收監測看板</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
-</head>
-<body class="bg-light">
-    <div class="container py-4">
-        <h2 class="mb-4 fw-bold text-secondary">台灣藥品回收監測看板</h2>
-        
-        <div class="row mb-4">
-            <div class="col-md-6 offset-md-3 bg-white p-3 rounded shadow-sm">
-                <canvas id="reasonChart"></canvas>
-            </div>
-        </div>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
 
-        <div class="card shadow-sm">
-            <div class="card-body">
-                <table id="recallTable" class="table table-hover table-bordered" style="width:100%">
-                    <thead class="table-light">
-                        <tr>
-                            <th>發文日期</th>
-                            <th>分級</th>
-                            <th>產品名稱</th>
-                            <th>回收原因</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        </tbody>
-                </table>
-            </div>
+    <style>
+        :root {
+            --bg: #0d0f14;
+            --surface: #13161e;
+            --surface2: #1a1f2b;
+            --border: rgba(255,255,255,0.07);
+            --accent: #c8f542;
+            --accent2: #ff5c5c;
+            --accent3: #5ca8ff;
+            --text: #e8eaf0;
+            --text-dim: #6b7280;
+            --text-muted: #3a3f4d;
+            --danger: #ff4f4f;
+            --warning: #f6c23e;
+            --serif: 'Noto Serif TC', serif;
+            --mono: 'DM Mono', monospace;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--serif);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ─── Noise overlay ─── */
+        body::before {
+            content: '';
+            position: fixed; inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events: none; z-index: 0; opacity: 0.4;
+        }
+
+        /* ─── Layout ─── */
+        .shell {
+            position: relative; z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 48px 24px 80px;
+        }
+
+        /* ─── Header ─── */
+        header {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            margin-bottom: 52px;
+            gap: 16px;
+        }
+
+        .header-left {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .eyebrow {
+            font-family: var(--mono);
+            font-size: 11px;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--accent);
+            opacity: 0.8;
+        }
+
+        h1 {
+            font-size: clamp(24px, 4vw, 38px);
+            font-weight: 700;
+            line-height: 1.15;
+            letter-spacing: -0.02em;
+        }
+
+        h1 span {
+            color: var(--accent);
+        }
+
+        .live-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: var(--mono);
+            font-size: 11px;
+            letter-spacing: 0.1em;
+            color: var(--text-dim);
+            border: 1px solid var(--border);
+            padding: 6px 14px;
+            border-radius: 100px;
+            background: var(--surface);
+        }
+
+        .live-dot {
+            width: 7px; height: 7px;
+            border-radius: 50%;
+            background: var(--accent);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.85); }
+        }
+
+        /* ─── KPI Strip ─── */
+        .kpi-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 12px;
+            margin-bottom: 36px;
+        }
+
+        .kpi {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px 22px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .kpi::after {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; height: 2px;
+            background: var(--kpi-color, var(--accent));
+        }
+
+        .kpi:hover {
+            transform: translateY(-2px);
+            border-color: rgba(255,255,255,0.13);
+        }
+
+        .kpi-label {
+            font-family: var(--mono);
+            font-size: 10px;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            margin-bottom: 10px;
+        }
+
+        .kpi-value {
+            font-size: 32px;
+            font-weight: 700;
+            line-height: 1;
+            color: var(--text);
+        }
+
+        .kpi-sub {
+            font-family: var(--mono);
+            font-size: 11px;
+            color: var(--text-dim);
+            margin-top: 6px;
+        }
+
+        /* ─── Main grid ─── */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 20px;
+            align-items: start;
+        }
+
+        @media (max-width: 900px) {
+            .main-grid { grid-template-columns: 1fr; }
+        }
+
+        /* ─── Panel ─── */
+        .panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .panel-header {
+            padding: 20px 24px 16px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .panel-title {
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .panel-title::before {
+            content: '';
+            display: block;
+            width: 3px; height: 14px;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+
+        .panel-body {
+            padding: 20px 24px;
+        }
+
+        /* ─── Chart panel ─── */
+        .chart-wrap {
+            position: relative;
+            height: 280px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* ─── Table overrides ─── */
+        .table-panel .panel-body { padding: 0; }
+
+        #recallTable_wrapper {
+            padding: 16px 20px 20px;
+        }
+
+        #recallTable_wrapper .dataTables_filter input,
+        #recallTable_wrapper .dataTables_length select {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            padding: 6px 12px;
+            font-family: var(--serif);
+            font-size: 13px;
+            outline: none;
+        }
+
+        #recallTable_wrapper .dataTables_filter input:focus,
+        #recallTable_wrapper .dataTables_length select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px rgba(200,245,66,0.12);
+        }
+
+        #recallTable_wrapper .dataTables_filter label,
+        #recallTable_wrapper .dataTables_length label,
+        #recallTable_wrapper .dataTables_info {
+            color: var(--text-dim);
+            font-size: 13px;
+        }
+
+        #recallTable_wrapper .dataTables_paginate .paginate_button {
+            color: var(--text-dim) !important;
+            border: 1px solid var(--border) !important;
+            border-radius: 6px !important;
+            padding: 4px 10px !important;
+            margin: 0 2px !important;
+            font-size: 13px;
+            background: var(--surface2) !important;
+            transition: all 0.15s;
+        }
+
+        #recallTable_wrapper .dataTables_paginate .paginate_button:hover {
+            background: var(--surface2) !important;
+            color: var(--accent) !important;
+            border-color: var(--accent) !important;
+        }
+
+        #recallTable_wrapper .dataTables_paginate .paginate_button.current {
+            background: var(--accent) !important;
+            color: #0d0f14 !important;
+            border-color: var(--accent) !important;
+            font-weight: 600;
+        }
+
+        #recallTable {
+            border-collapse: separate !important;
+            border-spacing: 0 !important;
+            width: 100% !important;
+        }
+
+        #recallTable thead th {
+            background: var(--surface2);
+            color: var(--text-dim);
+            font-family: var(--mono);
+            font-size: 10px;
+            letter-spacing: 0.13em;
+            text-transform: uppercase;
+            padding: 12px 14px;
+            border: none !important;
+            border-bottom: 1px solid var(--border) !important;
+            white-space: nowrap;
+        }
+
+        #recallTable thead th.sorting::after,
+        #recallTable thead th.sorting_asc::after,
+        #recallTable thead th.sorting_desc::after {
+            color: var(--accent) !important;
+            opacity: 0.6;
+        }
+
+        #recallTable tbody tr {
+            transition: background 0.15s;
+        }
+
+        #recallTable tbody tr:hover td {
+            background: rgba(255,255,255,0.03) !important;
+        }
+
+        #recallTable tbody td {
+            border: none !important;
+            border-bottom: 1px solid var(--border) !important;
+            padding: 13px 14px;
+            font-size: 13.5px;
+            color: var(--text);
+            vertical-align: middle;
+            background: transparent;
+        }
+
+        .date-cell {
+            font-family: var(--mono);
+            font-size: 12px;
+            color: var(--text-dim);
+            white-space: nowrap;
+        }
+
+        .product-name {
+            font-weight: 600;
+            font-size: 13.5px;
+        }
+
+        .reason-text {
+            font-size: 12.5px;
+            color: rgba(232,234,240,0.7);
+            line-height: 1.5;
+        }
+
+        /* ─── Badges ─── */
+        .badge-grade {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-family: var(--mono);
+            font-size: 10px;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            padding: 4px 10px;
+            border-radius: 100px;
+            white-space: nowrap;
+        }
+
+        .badge-danger {
+            background: rgba(255,79,79,0.15);
+            color: #ff7979;
+            border: 1px solid rgba(255,79,79,0.3);
+        }
+
+        .badge-warning {
+            background: rgba(246,194,62,0.12);
+            color: #f6c23e;
+            border: 1px solid rgba(246,194,62,0.25);
+        }
+
+        /* ─── Skeleton loader ─── */
+        .skeleton-row td {
+            background: transparent !important;
+        }
+
+        .skel {
+            height: 14px;
+            border-radius: 4px;
+            background: linear-gradient(90deg, var(--surface2) 25%, var(--surface) 50%, var(--surface2) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.4s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* ─── Scrollbar ─── */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--text-muted); border-radius: 3px; }
+    </style>
+</head>
+<body>
+<div class="shell">
+
+    <!-- Header -->
+    <header>
+        <div class="header-left">
+            <div class="eyebrow">TFDA · 藥品安全監測系統</div>
+            <h1>藥品回收<span>監測看板</span></h1>
+        </div>
+        <div class="live-badge">
+            <span class="live-dot"></span>
+            <span>即時更新中</span>
+        </div>
+    </header>
+
+    <!-- KPI Strip -->
+    <div class="kpi-row" id="kpiRow">
+        <div class="kpi" style="--kpi-color: var(--accent2)">
+            <div class="kpi-label">本年度回收</div>
+            <div class="kpi-value" id="kpi-total">—</div>
+            <div class="kpi-sub">件藥品回收公告</div>
+        </div>
+        <div class="kpi" style="--kpi-color: var(--danger)">
+            <div class="kpi-label">第一級</div>
+            <div class="kpi-value" id="kpi-class1">—</div>
+            <div class="kpi-sub">最高警示等級</div>
+        </div>
+        <div class="kpi" style="--kpi-color: var(--warning)">
+            <div class="kpi-label">第二級</div>
+            <div class="kpi-value" id="kpi-class2">—</div>
+            <div class="kpi-sub">中度警示等級</div>
+        </div>
+        <div class="kpi" style="--kpi-color: var(--accent3)">
+            <div class="kpi-label">最近更新</div>
+            <div class="kpi-value" style="font-size:18px; margin-top: 4px;" id="kpi-latest">—</div>
+            <div class="kpi-sub">最新公告日期</div>
         </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Main Grid -->
+    <div class="main-grid">
 
-    <script>
-        // 抓取 GitHub Actions 產出的靜態 JSON
-        fetch('data/data.json')
-            .then(response => response.json())
-            .then(data => {
-                const reasonsCount = {};
-                let tableHTML = "";
+        <!-- Table Panel -->
+        <div class="panel table-panel">
+            <div class="panel-header">
+                <div class="panel-title">回收事件明細</div>
+            </div>
+            <table id="recallTable" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>發文日期</th>
+                        <th>分級</th>
+                        <th>產品名稱</th>
+                        <th>回收原因</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <!-- skeleton rows -->
+                    <tr class="skeleton-row"><td><div class="skel" style="width:70px"></div></td><td><div class="skel" style="width:50px"></div></td><td><div class="skel" style="width:140px"></div></td><td><div class="skel"></div></td></tr>
+                    <tr class="skeleton-row"><td><div class="skel" style="width:70px"></div></td><td><div class="skel" style="width:50px"></div></td><td><div class="skel" style="width:120px"></div></td><td><div class="skel"></div></td></tr>
+                    <tr class="skeleton-row"><td><div class="skel" style="width:70px"></div></td><td><div class="skel" style="width:50px"></div></td><td><div class="skel" style="width:160px"></div></td><td><div class="skel"></div></td></tr>
+                </tbody>
+            </table>
+        </div>
 
-                // 1. 資料清洗與 HTML 組合
-                data.forEach(item => {
-                    // 校正鍵值：使用 item.原因、item.產品、item.日期
-                    let rawReason = item.原因 || "未註明";
-                    let shortReason = rawReason.substring(0, 15) + "..."; // 擷取前15字供圓餅圖標籤使用
-                    reasonsCount[shortReason] = (reasonsCount[shortReason] || 0) + 1;
+        <!-- Side Panel: Chart -->
+        <div style="display:flex; flex-direction:column; gap:20px;">
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-title">原因分佈</div>
+                </div>
+                <div class="panel-body">
+                    <div class="chart-wrap">
+                        <canvas id="reasonChart"></canvas>
+                    </div>
+                </div>
+            </div>
 
-                    // 處理分級標籤顏色
-                    let badgeClass = item.回收分級 && item.回收分級.includes("一") ? "bg-danger" : "bg-warning text-dark";
+            <!-- Legend / Top Reasons -->
+            <div class="panel" id="legendPanel" style="display:none;">
+                <div class="panel-header">
+                    <div class="panel-title">主要原因</div>
+                </div>
+                <div class="panel-body" id="legendBody" style="padding:12px 20px;"></div>
+            </div>
+        </div>
 
-                    tableHTML += `
-                        <tr>
-                            <td>${item.日期 || ''}</td>
-                            <td><span class="badge ${badgeClass}">${item.回收分級 || ''}</span></td>
-                            <td><strong>${item.產品 || ''}</strong></td>
-                            <td>${rawReason}</td>
-                        </tr>
-                    `;
-                });
+    </div>
+</div>
 
-                // 2. 渲染 Chart.js 圓餅圖
-                new Chart(document.getElementById('reasonChart'), {
-                    type: 'doughnut', // 改為環圈圖提升視覺質感
-                    data: {
-                        labels: Object.keys(reasonsCount),
-                        datasets: [{
-                            data: Object.values(reasonsCount),
-                            backgroundColor: [
-                                '#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b', '#858796'
-                            ]
-                        }]
-                    },
-                    options: {
-                        plugins: { title: { display: true, text: '回收原因分佈概況' } }
+<!-- Scripts -->
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+const PALETTE = ['#c8f542','#5ca8ff','#ff7f50','#a78bfa','#34d399','#fb923c','#f472b6','#60a5fa'];
+
+fetch('data/data.json')
+    .then(r => r.json())
+    .then(data => {
+        // ── KPI Calculation ──
+        let class1 = 0, class2 = 0, latest = '';
+        const reasonsCount = {};
+
+        data.forEach(item => {
+            const grade = item.回收分級 || '';
+            if (grade.includes('一')) class1++;
+            else class2++;
+
+            const d = item.日期 || '';
+            if (d > latest) latest = d;
+
+            const raw = item.原因 || '未註明';
+            const key = raw.length > 18 ? raw.substring(0, 18) + '…' : raw;
+            reasonsCount[key] = (reasonsCount[key] || 0) + 1;
+        });
+
+        document.getElementById('kpi-total').textContent = data.length;
+        document.getElementById('kpi-class1').textContent = class1;
+        document.getElementById('kpi-class2').textContent = class2;
+        document.getElementById('kpi-latest').textContent = latest.substring(0, 10);
+
+        // ── Table rows ──
+        let rows = '';
+        data.forEach(item => {
+            const grade = item.回收分級 || '';
+            const isOne = grade.includes('一');
+            const badgeClass = isOne ? 'badge-danger' : 'badge-warning';
+            rows += `
+                <tr>
+                    <td class="date-cell">${item.日期 || ''}</td>
+                    <td><span class="badge-grade ${badgeClass}">${grade}</span></td>
+                    <td><span class="product-name">${item.產品 || ''}</span></td>
+                    <td><span class="reason-text">${item.原因 || ''}</span></td>
+                </tr>`;
+        });
+        document.getElementById('tableBody').innerHTML = rows;
+
+        // ── DataTable ──
+        $('#recallTable').DataTable({
+            order: [[0, 'desc']],
+            pageLength: 10,
+            language: {
+                search: '搜尋：',
+                lengthMenu: '每頁顯示 _MENU_ 筆',
+                info: '第 _START_ – _END_ 筆，共 _TOTAL_ 筆',
+                paginate: { previous: '←', next: '→' },
+                zeroRecords: '查無資料',
+                infoEmpty: '共 0 筆',
+                infoFiltered: '（共 _MAX_ 筆中篩選）'
+            }
+        });
+
+        // ── Chart ──
+        const labels = Object.keys(reasonsCount);
+        const values = Object.values(reasonsCount);
+
+        new Chart(document.getElementById('reasonChart'), {
+            type: 'doughnut',
+            data: {
+                labels,
+                datasets: [{
+                    data: values,
+                    backgroundColor: PALETTE.slice(0, labels.length),
+                    borderWidth: 0,
+                    hoverOffset: 8
+                }]
+            },
+            options: {
+                cutout: '68%',
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: '#1a1f2b',
+                        borderColor: 'rgba(255,255,255,0.08)',
+                        borderWidth: 1,
+                        titleColor: '#c8f542',
+                        bodyColor: '#e8eaf0',
+                        padding: 12,
+                        callbacks: {
+                            label: ctx => ` ${ctx.raw} 件  (${(ctx.raw/data.length*100).toFixed(1)}%)`
+                        }
                     }
-                });
+                }
+            }
+        });
 
-                // 3. 將 HTML 注入表格並初始化 DataTables
-                document.querySelector('#recallTable tbody').innerHTML = tableHTML;
-                
-                $('#recallTable').DataTable({
-                    "order": [[ 0, "desc" ]], // 預設依據「日期」(第0欄) 降冪排序
-                    "language": {
-                        "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/zh-HANT.json" // 繁體中文化
-                    },
-                    "pageLength": 10 // 預設顯示 10 筆
-                });
-            })
-            .catch(error => {
-                console.error('資料載入失敗:', error);
-                alert("資料載入失敗，請檢查 data.json 路徑或按 F12 查看主控台錯誤。");
-            });
-    </script>
+        // ── Custom legend ──
+        const sorted = labels.map((l,i) => ({l, v: values[i], c: PALETTE[i]})
+        ).sort((a,b) => b.v - a.v).slice(0,6);
+
+        const legendBody = document.getElementById('legendBody');
+        legendBody.innerHTML = sorted.map(({l,v,c}) => `
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+                <div style="flex-shrink:0;width:10px;height:10px;border-radius:50%;background:${c}"></div>
+                <div style="flex:1;font-size:12px;color:rgba(232,234,240,0.75);line-height:1.4;">${l}</div>
+                <div style="font-family:var(--mono);font-size:12px;color:var(--text);font-weight:500;">${v}</div>
+            </div>`).join('');
+
+        document.getElementById('legendPanel').style.display = 'block';
+    })
+    .catch(err => {
+        console.error('資料載入失敗:', err);
+        document.getElementById('tableBody').innerHTML =
+            `<tr><td colspan="4" style="text-align:center;padding:40px;color:var(--text-dim);font-family:var(--mono);font-size:13px;">
+                ⚠ 資料載入失敗，請確認 data/data.json 路徑正確</td></tr>`;
+    });
+</script>
 </body>
 </html>

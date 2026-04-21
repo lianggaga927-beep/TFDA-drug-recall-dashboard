@@ -46,6 +46,8 @@
             font-family: var(--sans);
             min-height: 100vh;
             font-size: 14px;
+            display: flex;
+            flex-direction: column; /* 讓 Footer 可以固定在底部 */
         }
 
         /* ─── Top Nav ─── */
@@ -56,31 +58,14 @@
             box-shadow: var(--shadow);
         }
 
-        .nav-inner {
-            max-width: 1280px;
-            margin: 0 auto;
-            padding: 0 28px;
-            height: 68px;
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
+        .nav-inner { max-width: 1280px; margin: 0 auto; padding: 0 28px; height: 68px; display: flex; align-items: center; gap: 20px; }
         .brand { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
-        .brand-icon {
-            width: 36px; height: 36px; border-radius: 8px; background: var(--blue-soft);
-            border: 1px solid var(--blue-border); display: flex; align-items: center; justify-content: center; font-size: 16px;
-        }
+        .brand-icon { width: 36px; height: 36px; border-radius: 8px; background: var(--blue-soft); border: 1px solid var(--blue-border); display: flex; align-items: center; justify-content: center; font-size: 16px; }
         .brand-text h1 { font-size: 16px; font-weight: 700; color: var(--text); letter-spacing: -0.01em; line-height: 1.2; }
         .brand-text p { font-family: var(--mono); font-size: 10px; color: var(--text-muted); letter-spacing: 0.06em; text-transform: uppercase; margin-top: 1px; }
-
         .nav-divider { width: 1px; height: 28px; background: var(--border); flex-shrink: 0; }
-
         .nav-stats { display: flex; align-items: center; gap: 8px; flex: 1; }
-        .stat-pill {
-            display: inline-flex; align-items: center; gap: 7px; padding: 6px 14px;
-            border-radius: 100px; font-size: 13px; font-weight: 500; border: 1px solid; cursor: default;
-        }
+        .stat-pill { display: inline-flex; align-items: center; gap: 7px; padding: 6px 14px; border-radius: 100px; font-size: 13px; font-weight: 500; border: 1px solid; cursor: default; }
         .stat-pill .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
         .stat-pill.red   { background: var(--red-soft);   color: var(--red);   border-color: var(--red-border); }
         .stat-pill.amber { background: var(--amber-soft);  color: var(--amber); border-color: var(--amber-border); }
@@ -88,90 +73,69 @@
         .stat-pill.red   .dot { background: var(--red); }
         .stat-pill.amber .dot { background: var(--amber); animation: pulse 2s infinite; }
         .stat-pill.green .dot { background: var(--green); }
-
         @keyframes pulse { 0%, 100% { opacity:1; transform:scale(1); } 50% { opacity:.5; transform:scale(.8); } }
-
         .nav-search { margin-left: auto; position: relative; flex-shrink: 0; }
-        .nav-search input {
-            width: 280px; padding: 8px 14px 8px 36px; background: var(--surface2); border: 1px solid var(--border);
-            border-radius: 8px; font-family: var(--sans); font-size: 13px; color: var(--text); outline: none;
-        }
+        .nav-search input { width: 280px; padding: 8px 14px 8px 36px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; font-family: var(--sans); font-size: 13px; color: var(--text); outline: none; }
         .nav-search input::placeholder { color: var(--text-muted); }
         .nav-search input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(59,130,246,0.12); background: var(--surface); }
         .search-icon { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 13px; pointer-events: none; }
 
         /* ─── Shell & Layout ─── */
-        .shell { max-width: 1280px; margin: 0 auto; padding: 28px 28px 72px; }
-        
+        .shell { max-width: 1280px; width: 100%; margin: 0 auto; padding: 28px 28px 40px; flex: 1; }
         .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
         .section-title { display: flex; align-items: center; gap: 10px; font-size: 15px; font-weight: 600; color: var(--text); }
         .section-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--blue); }
         .section-badge { font-family: var(--mono); font-size: 11px; padding: 3px 10px; border-radius: 100px; background: var(--surface2); border: 1px solid var(--border); color: var(--text-dim); }
-        
-        .live-tag {
-            font-family: var(--mono); font-size: 10px; font-weight: 500; letter-spacing: 0.12em;
-            padding: 5px 12px; border-radius: 6px; background: var(--blue-soft); color: var(--blue); border: 1px solid var(--blue-border);
-        }
-
+        .live-tag { font-family: var(--mono); font-size: 10px; font-weight: 500; letter-spacing: 0.12em; padding: 5px 12px; border-radius: 6px; background: var(--blue-soft); color: var(--blue); border: 1px solid var(--blue-border); }
         .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; width: 100%; }
 
         /* ─── DataTable Overrides ─── */
         #recallTable_wrapper { padding: 12px 16px 16px; }
         #recallTable { border-collapse: separate !important; border-spacing: 0 !important; width: 100% !important; }
-        
-        #recallTable thead th {
-            background: var(--surface2); color: var(--text-dim); font-family: var(--mono); font-size: 10px;
-            letter-spacing: 0.1em; text-transform: uppercase; padding: 10px 14px; border: none !important; border-bottom: 1px solid var(--border) !important; white-space: nowrap;
-        }
-
+        #recallTable thead th { background: var(--surface2); color: var(--text-dim); font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; padding: 10px 14px; border: none !important; border-bottom: 1px solid var(--border) !important; white-space: nowrap; }
         #recallTable tbody tr { transition: background 0.1s; }
         #recallTable tbody tr:hover td { background: var(--blue-soft) !important; }
-        
-        #recallTable tbody td {
-            border: none !important; border-bottom: 1px solid var(--border-light) !important; padding: 12px 14px;
-            font-size: 13.5px; color: var(--text); vertical-align: middle; background: transparent;
-        }
+        #recallTable tbody td { border: none !important; border-bottom: 1px solid var(--border-light) !important; padding: 12px 14px; font-size: 13.5px; color: var(--text); vertical-align: middle; background: transparent; }
 
         .date-cell { font-family: var(--mono); font-size: 12px; color: var(--text-dim); white-space: nowrap; }
         .product-name { font-weight: 600; color: var(--text); display: block; }
         .meta-text { display: block; font-family: var(--mono); font-size: 11.5px; color: var(--text-muted); margin-top: 4px; }
-        .batch-cell { 
-         font-family: var(--mono); 
-         font-size: 12px; 
-         color: var(--text); 
-         word-break: break-all; 
-         white-space: normal !important; /* 新增：強制允許換行 */
-         min-width: 120px; /* 新增：確保電腦版有基本寬度 */
-         line-height: 1.4; 
-         }
+        .batch-cell { font-family: var(--mono); font-size: 12px; color: var(--text); word-break: break-all; white-space: normal !important; min-width: 120px; line-height: 1.4; }
         .reason-text { font-size: 12.5px; color: var(--text-dim); line-height: 1.5; }
 
-        /* ─── Badges ─── */
-        .badge-grade {
-            display: inline-flex; align-items: center; font-family: var(--mono); font-size: 10px;
-            font-weight: 500; letter-spacing: 0.05em; padding: 3px 9px; border-radius: 100px; white-space: nowrap; border: 1px solid;
-        }
+        .badge-grade { display: inline-flex; align-items: center; font-family: var(--mono); font-size: 10px; font-weight: 500; letter-spacing: 0.05em; padding: 3px 9px; border-radius: 100px; white-space: nowrap; border: 1px solid; }
         .badge-danger  { background: var(--red-soft);   color: var(--red);   border-color: var(--red-border); }
         .badge-warning { background: var(--amber-soft);  color: var(--amber); border-color: var(--amber-border); }
 
-        /* ─── 分頁按鈕樣式 ─── */
         .dataTables_paginate { margin-top: 15px; text-align: center; }
-        .paginate_button {
-            color: var(--text-dim) !important; border: 1px solid var(--border) !important; border-radius: 6px !important;
-            padding: 4px 10px !important; margin: 0 2px !important; font-size: 12.5px; background: var(--surface) !important; cursor: pointer;
-        }
+        .paginate_button { color: var(--text-dim) !important; border: 1px solid var(--border) !important; border-radius: 6px !important; padding: 4px 10px !important; margin: 0 2px !important; font-size: 12.5px; background: var(--surface) !important; cursor: pointer; }
         .paginate_button:hover { background: var(--blue-soft) !important; color: var(--blue) !important; border-color: var(--blue-border) !important; }
         .paginate_button.current { background: var(--blue) !important; color: #fff !important; border-color: var(--blue) !important; font-weight: 600; }
 
-        /* ─── Skeleton ─── */
-        .skel {
-            height: 13px; border-radius: 4px; background: linear-gradient(90deg, var(--border) 25%, var(--border-light) 50%, var(--border) 75%);
-            background-size: 200% 100%; animation: shimmer 1.4s infinite;
-        }
+        .skel { height: 13px; border-radius: 4px; background: linear-gradient(90deg, var(--border) 25%, var(--border-light) 50%, var(--border) 75%); background-size: 200% 100%; animation: shimmer 1.4s infinite; }
         @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
         ::-webkit-scrollbar { width: 5px; height: 5px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+        /* ─── 頁尾警語樣式 (Footer) ─── */
+        .site-footer {
+            text-align: center;
+            padding: 0 28px 40px;
+            color: var(--text-dim);
+            font-size: 12px;
+            line-height: 1.6;
+        }
+        .site-footer a {
+            color: var(--blue);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.15s;
+        }
+        .site-footer a:hover {
+            color: #1d4ed8; /* 更深的藍色 */
+            text-decoration: underline;
+        }
 
         /* ─── 手機端視區嚴格控制 ─── */
         @media (max-width: 768px) {
@@ -181,7 +145,8 @@
             .nav-stats { width: 100%; overflow-x: auto; padding-bottom: 4px; justify-content: flex-start; }
             .nav-search { width: 100%; }
             .nav-search input { width: 100%; }
-            .shell { padding: 16px 12px 40px; width: 100%; box-sizing: border-box; }
+            .shell { padding: 16px 12px 24px; width: 100%; box-sizing: border-box; }
+            .site-footer { padding: 0 16px 32px; font-size: 11.5px; } /* 手機端頁尾微調 */
             .card { width: 100%; max-width: 100vw; }
             #recallTable { width: 100% !important; }
             #recallTable th, #recallTable td { word-wrap: break-word; white-space: normal; }
@@ -242,6 +207,16 @@
     </div>
 </div>
 
+<footer class="site-footer">
+    <p>
+        ⚠ 本看板依政府 OpenData API 抓取最新資訊，僅供院內盤點參考。<br>
+        若需確認最完整之回收訊息與公文，仍建議查閱 
+        <a href="https://consumer.fda.gov.tw/GMP/Product.aspx?nodeID=420" target="_blank" rel="noopener noreferrer">
+            衛生福利部食品藥物管理署 (TFDA) 官方網站
+        </a>。
+    </p>
+</footer>
+
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
@@ -252,7 +227,7 @@ fetch('data/data.json')
     .then(data => {
         let class1 = 0, class2 = 0;
 
-        // 統計運算 (移除圓餅圖邏輯，大幅精簡)
+        // 統計運算
         data.forEach(item => {
             const grade = item.回收分級 || '';
             if (grade.includes('一')) class1++; else class2++;

@@ -151,14 +151,24 @@
         .site-footer a { color: var(--blue); text-decoration: none; font-weight: 500; transition: color 0.15s; }
         .site-footer a:hover { color: #1d4ed8; text-decoration: underline; }
 
-        /* ─── 手機端視區嚴格控制 ─── */
+/* ─── 手機端視區嚴格控制 ─── */
         @media (max-width: 768px) {
             html, body { overflow-x: hidden; width: 100vw; }
-            .nav-inner { flex-wrap: wrap; height: auto; padding: 12px 16px; gap: 12px; }
+            
+            /* 導航列改為垂直堆疊，並重新排序 */
+            .nav-inner { flex-direction: column; align-items: flex-start; height: auto; padding: 12px 16px; gap: 10px; }
+            .brand { width: 100%; }
             .nav-divider { display: none; }
-            .nav-stats { width: 100%; overflow-x: auto; padding-bottom: 4px; justify-content: flex-start; }
-            .nav-search { width: 100%; }
+            
+            /* 搜尋列權重提升至第二層 */
+            .nav-search { width: 100%; order: 2; }
             .nav-search input { width: 100%; }
+            
+            /* 統計標籤降至第三層，並強制縮小尺寸 */
+            .nav-stats { width: 100%; order: 3; justify-content: flex-start; flex-wrap: wrap; gap: 6px; overflow-x: visible; padding-bottom: 0; }
+            .stat-pill { padding: 4px 8px; font-size: 11px; }
+            .stat-pill .dot { width: 5px; height: 5px; }
+
             .shell { padding: 16px 12px 24px; width: 100%; box-sizing: border-box; }
             .filter-bar { padding: 12px; gap: 10px; }
             .filter-select { flex: 1 1 calc(50% - 5px); min-width: 130px; }
@@ -202,6 +212,7 @@
             <span class="section-dot"></span>
             最新回收公告
             <span class="section-badge" id="totalBadge">載入中…</span>
+            <span id="updateTime" style="font-size: 11.5px; color: var(--text-muted); font-weight: 400; margin-left: 8px;"></span>
         </div>
         <div class="live-tag">LIVE</div>
     </div>
@@ -280,9 +291,20 @@
 <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
 
 <script>
-fetch('data/data.json')
-    .then(r => r.json())
+// 加入時間戳參數 (Cache-Busting) 強制瀏覽器抓取最新檔案
+fetch('data/data.json?t=' + new Date().getTime())
+    .then(r => {
+        // 擷取 GitHub 伺服器回傳的檔案最後修改時間
+        const lastMod = r.headers.get('Last-Modified');
+        const updateText = lastMod 
+            ? new Date(lastMod).toLocaleString('zh-TW', { hour12: false }) 
+            : '系統最新排程';
+        document.getElementById('updateTime').textContent = `(資料更新時間：${updateText})`;
+        
+        return r.json();
+    })
     .then(data => {
+        // ... (下方原有的 let class1 = 0, class2 = 0; 等邏輯維持不變)
         let class1 = 0, class2 = 0;
         const yearsSet = new Set();
 

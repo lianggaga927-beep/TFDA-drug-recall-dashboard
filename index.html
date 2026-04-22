@@ -207,11 +207,10 @@
 </nav>
 
 <div class="shell">
-    <div class="section-header">
+<div class="section-header">
         <div class="section-title">
             <span class="section-dot"></span>
             最新回收公告
-            <span class="section-badge" id="totalBadge">載入中…</span>
             <span id="updateTime" style="font-size: 11.5px; color: var(--text-muted); font-weight: 400; margin-left: 8px;"></span>
         </div>
         <div class="live-tag">LIVE</div>
@@ -330,10 +329,11 @@ fetch('data/data.json?t=' + new Date().getTime())
         document.getElementById('pill-total').textContent = data.length;
         document.getElementById('pill-class1').textContent = class1;
         document.getElementById('pill-class2').textContent = class2;
-        document.getElementById('totalBadge').textContent = `共 ${data.length} 筆`;
+        // 【此處的 totalBadge 賦值程式碼已刪除】
+        
         // 動態更新「狀態：全部」的總數顯示
         document.querySelector('#filterGrade option[value=""]').textContent = `狀態：全部 (${data.length})`;
-
+        
         // 構建表格 HTML
         let rows = '';
         data.forEach(item => {

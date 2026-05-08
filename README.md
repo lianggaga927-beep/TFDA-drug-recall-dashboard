@@ -1,6 +1,6 @@
 # 台灣西藥回收監測看板 (TFDA Drug Recall Dashboard)
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-Click%20Here-blue?style=for-the-badge)](https://lianggaga927-beep.github.io/TFDA-drug-recall-dashboard/)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Click%20Here-blue?style=for-the-badge)](https://liangrxdev.github.io/TFDA-drug-recall-dashboard/)
 
 **【結論】**
 本專案為自動化介接「衛福部食藥署 (TFDA) 西藥回收公開資料集」之視覺化儀表板。採用 Serverless (JAMstack) 架構，將後端資料清洗與前端視覺化分離，無需維護實體伺服器即可實現每日自動更新。專為臨床醫療人員與庫房管理員設計，以提升藥物安全事件通報後的盤點與鎖檔效率。
